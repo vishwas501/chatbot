@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/static/bot.png" type="image/x-icon">
-   <title>Scholar Bot</title>
+    <title>Scholar Bot</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -18,7 +18,7 @@
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #f9e5e5;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -32,7 +32,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            background-color: #f9f9f9;
+            background-color: #f8e9e9;
         }
         #user-input {
             width: calc(100% - 120px); /* Adjusted width to accommodate mic button */
@@ -52,36 +52,37 @@
             height: 30px;
         }
         .message {
+            display: flex;
             margin: 10px 0;
             padding: 10px;
             border-radius: 4px;
             background-color: #e0f7fa;
         }
         .bot-message {
-            text-align: left;
+            align-items: center;
         }
         .user-message {
-            text-align: right;
+            align-items: center;
+            justify-content: flex-end;
         }
-        .bot-photo {
-            width: 20px;
-            height: 20px;
+        .photo {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             margin-right: 10px;
         }
-        #header-image {
-            width: 50px; /* Adjust the width of the image */
-            height: auto; /* Maintain aspect ratio */
-            margin-bottom: 10px; /* Add some space below the image */
-        }
-        
     </style>
 </head>
 <body>
     <div id="container">
         <h1> <img id="header-image" src="/static/bot.png" alt="Header Image">Maya</h1>
         
-        <div id="chat-box"></div>
+        <div id="chat-box">
+            <div class="bot-message message">
+                <img src="/static/bot.png" alt="Maya Photo" class="photo">
+                <div>Hello! I'm Maya, your Virtual Assistant. Can I know your name?</div>
+            </div>
+        </div>
         <div>
             <input type="text" id="user-input" placeholder="Type your message..." onkeydown="handleKeyDown(event)">
             <button id="mic-btn" class="mic-inactive"><i class="fa fa-microphone" aria-hidden="true"></i></button>
@@ -132,15 +133,17 @@
 
         function sendMessage() {
             var user_input = document.getElementById("user-input").value;
-            var username = "{{ username }}";  // Replace "{{ username }}" with actual username variable
-            document.getElementById("chat-box").innerHTML += '<div class="user-message message">' + user_input + '</div>';
+            document.getElementById("chat-box").innerHTML += `
+                <div class="user-message message">
+                    <img src="/static/userphoto.png" alt="User Photo" class="photo">
+                    <div>You: ${user_input}</div>
+                </div>`;
             document.getElementById("user-input").value = "";
 
             fetch("/chat", {
                 method: "POST",
                 body: new URLSearchParams({
                     "user_input": user_input,
-                    "username": username
                 }),
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
