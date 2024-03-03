@@ -2,8 +2,8 @@ from flask import Flask, render_template, send_from_directory, request
 
 app = Flask(__name__)
 
-# Global variable to track if it's the first interaction
-first_interaction = True
+# Global variable to track if the username has been set
+username_set = False
 
 @app.route('/')
 def index():
@@ -15,11 +15,12 @@ def serve_static(filename):
 
 @app.route('/chat', methods=['POST'])
 def chat():
-      # Access the global variable
+    global username_set
 
     user_input = request.form['user_input']
     username = request.form.get('username', 'User')
     
+    # Set username only if it's still the default and there is valid input
     
     bot_response = get_bot_response(user_input, username)
 
@@ -36,14 +37,11 @@ def chat():
 def get_bot_response(user_input, username):
     user_input = user_input.lower()
     
-    bot_message = " "  # Initialize bot response
-    
+    bot_message = ""  # Initialize bot response
+
     # Bot responses
     if "hello" in user_input or "hii" in user_input:
         bot_message += "Hello! Nice to meet you."
-    elif username == 'User' and user_input:
-        username = user_input.strip()  # Set username based on user input
-        bot_message += f"Nice to meet you, {username}! How can I assist you today?"
     elif "admission" in user_input:
         bot_message += "Here's the admission information:<br><br>"
         bot_message += "Admission to B.A/B.Sc/B.Com/B.C.A 1st will be on merit basis.<br>"
@@ -53,35 +51,57 @@ def get_bot_response(user_input, username):
         bot_message += "For admission form, click <a href='https://spnmukerian.files.wordpress.com/2020/07/camscanner-07-28-2020-12.34.28.pdf' target='_blank'>here</a>.<br>"
         bot_message += "For online registration, click <a href='https://www.example.com/online_registration'>here</a>.<br>"
         bot_message += "For more details, refer <a href='https://www.example.com/admission_details'>here</a>."
-    elif "apply" in user_input or "how to apply?" in user_input or "how to apply" in user_input:
-        bot_message += "Students can apply to the college in two ways:<br><br>"
-        bot_message += "1. Online Application: Students can apply online through the college's official website. You can find the online application form <a href='https://www.example.com/apply_online'>here</a>.<br>"
-        bot_message += "2. Visit College: Alternatively, students can visit the college office in person and submit their application.<br>"
-        bot_message += "Address: SPN College, Railway Road, Mukerian, Punjab 144211, India"
-    elif "history" in user_input or "college history" in user_input or "college records" in user_input:
-        bot_message += "The college derives its name from SWAMI PREMANAND, a saint and philosopher of the modern times.<br>"
-        bot_message += "He was a great force in pioneering the religious sentiments in the second and third quarter of the past century.<br>"
-        bot_message += "The essential spirit of Swamiji’s message lays emphasis upon the need for abolishing ignorance and dogmatic beliefs, which had for centuries crippled the human mind.<br>"
-        bot_message += "It was thought appropriate by the people of the area to raise an educational institution in the memory of this enlightened son of God who met with a fatal accident on 23rd April, 1965 at Mukerian."
-        bot_message += "You can find more about the college's history on the <a href='https://spncollegemukerian.com/college-history/'style='color: purple;' target='_blank'>college history page</a>."
-    elif "about college" in user_input or "college" in user_input or "about us" in user_input:
-        bot_message += "Swami Premanand Mahavidyalaya is a multifaculty postgraduate institution affiliated with Panjab University. It offers a variety of programs, including science, commerce, and arts. The college was founded in 1972 and has since grown to include over 1500 students."
-        bot_message += "For more information, you can refer to <a href='https://spncollegemukerian.com/'target='_blank'>College Website</a>."
-    elif "contact" in user_input or "contact us" in user_input:
-        bot_message += "You can contact us via the following methods:<br>"
-        bot_message += "<strong>Email:</strong> principalspn.mex@gmail.com<br>"
-        bot_message += "<strong>Phone:</strong> 01883-244070<br>"
-        bot_message += "<strong>Address:</strong> SPN College, Railway Road, Mukerian, Punjab 144211, India"
-    elif "scholarships" in user_input:
-        bot_message += "We offer various scholarships based on academic achievement, financial need, leadership qualities, and other criteria. You can find detailed information about available scholarships on our website's financial aid page."
-    elif "course" in user_input:
-        bot_message += "We offer various courses and degree programs, including undergraduate and postgraduate options."
-    elif "housing" in user_input:
-        bot_message += "We offer on-campus housing options for both domestic and international students. International students can apply for housing through our international student services office. Our on-campus housing includes dormitories, apartments, and family housing options."
-    elif "campus tour" in user_input:
-        bot_message += "You can schedule a campus tour through our website's admissions page. We offer both group tours and individual tours led by student guides. You can select a date and time that works for you and register for the tour online."
-    elif "thank you" in user_input or "thanks" in user_input:
-        bot_message += "You're welcome! If you have any more questions, feel free to ask."
+    elif "fees" in user_input or "fee" in user_input or "fees structure" in user_input or "fee structure" in user_input:  
+      bot_message += "Sure! Here are the available courses for which you can inquire about fees:<br><br>"
+      bot_message += "1. B.A<br>"
+      bot_message += "2. B.Sc<br>"
+      bot_message += "3. B.Com<br>"
+      bot_message += "4. B.C.A<br>"
+      bot_message += "5. M.Sc in Physics/Chemistry<br>"
+      bot_message += "6. M.A in History/Punjabi/English<br>"
+      bot_message += "<br>Please type the number corresponding to the course you want to inquire about."
+    elif user_input.isdigit():
+     selection = int(user_input)
+     if selection == 1:
+        bot_message += "Here is the fee structure for B.A:<br><br>"
+        bot_message += "1st Semester: $XXXX<br>"
+        bot_message += "2nd Semester: $XXXX<br>"
+        bot_message += "3rd Semester: $XXXX<br>"
+        bot_message += "4th Semester: $XXXX<br>"
+        bot_message += "5th Semester: $XXXX<br>"
+        bot_message += "6th Semester: $XXXX<br>"
+     elif selection ==2:
+        bot_message += "Here is the fee structure for B.S.c:<br><br>"
+        bot_message += "1st Semester: &#8377;14000<br>"
+        bot_message += "2nd Semester: &#8377;14000<br>"
+        bot_message += "3rd Semester: &#8377;15000<br>"
+        bot_message += "4th Semester: &#8377;15000<br>"
+        bot_message += "5th Semester: &#8377;16000<br>"
+        bot_message += "6th Semester: &#8377;16000<br>" 
+     elif selection ==3:
+        bot_message += "Here is the fee structure for B.com:<br><br>"
+        bot_message += "1st Semester: &#8377;10,000<br>"
+        bot_message += "2nd Semester: &#8377;10,000<br>"
+        bot_message += "3rd Semester: &#8377;12,000<br>"
+        bot_message += "4th Semester: &#8377;12,000<br>"
+        bot_message += "5th Semester: &#8377;12,500<br>"
+        bot_message += "6th Semester: &#8377;12,500<br>" 
+     elif selection ==4:
+        bot_message += "Here is the fee structure for B.C.A:<br><br>"
+        bot_message += "<hr>1st Semester: &#8377;25,000<br>"
+        bot_message += "<hr>2nd Semester: &#8377;25,0000<br>"
+        bot_message += "<hr>3rd Semester: &#8377;26,000<br>"
+        bot_message += "<hr>4th Semester: &#8377;26,000<br>"
+        bot_message += "<hr>5th Semester: &#8377;26,500<br>"
+        bot_message += "<hr>6th Semester: &#8377;26,500<br><hr>"        
+     elif selection ==5:
+        bot_message += "Here is the fee structure for M.S.C:<br><br>"
+        bot_message += "<hr>1st Semester: $XXXX<br>"
+        bot_message += "<hr>2nd Semester: $XXXX<br>"
+        bot_message += "<hr>3rd Semester: $XXXX<br>"
+        bot_message += "<hr>4th Semester: $XXXX<br>"
+        bot_message += "<hr>5th Semester: $XXXX<br>"
+        bot_message += "<hr>6th Semester: $XXXX<br><hr>" 
     else:
         bot_message += "I'm sorry, I didn't understand that. Can you please rephrase or ask a different question?"
     
